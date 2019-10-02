@@ -1,21 +1,36 @@
 {
     "Version": "1.0",
-    "Name": "Default",
-    "Info": "Default handler for everything. Doesn't apply any transformation and forwards everything unchanged to Endpoint/Path.",
+    "Name": "RemoveZeros",
+    "Info": "If they are zeros in dataPoints entries inside the series array, those should be removed. Anyoher Json shold just be proxy.",
     "Active": true,
     "Match": null,
     "IsMatchByExample": false,
     "TerminateOnMatch": true,
     "Transformation": {
-        "{{/}}": "{{/}}"
+        "{{/}}": "{{ifte('{{equals('{{len('{{choose('{{/series}}','{{prop('zeros')}}')}}')}}','0')}}','{{/}}','{{transform('removeZeros', '{{/}}')}}')}}"
     },
     "IsTransformationByExample": false,
+	"CustomProperties" : {
+		"zeros" : {
+			"dataPoints" : [
+                ["*" , 0]
+            ]
+		}
+    },
+    "Transformations": {
+		"removeZeros": {
+            "Transformation": {
+                "{{/type}}": "{{/type}}",
+                "{{/series}}": "{{chooseNot('{{/series}}','{{prop('zeros')}}')}}"
+            },
+			"IsTransformationByExample": false
+		}
+    },
     "Path": "",
     "Verb": "POST",
-    "Endpoint": "http://localhost:8088",
-	"Protocol": "http",
+    "Endpoint": "",
     "HttpHeaders": {
       "X-B3-TraceId": "{{traceid()}}",
-      "X-Tenant-Id": "{{tenant()}}"
+      "Xrs-Tenant-Id": "{{tenant()}}"
     }
 }
